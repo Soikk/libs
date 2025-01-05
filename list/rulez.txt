@@ -1,0 +1,20 @@
+		push
+	static
+		if space l[size++] = d
+	dynamic || naive
+		if !space realloc
+		if space l[size++] = d
+
+		push_i
+	static
+		no sneed
+	dynamic || naive
+		if !space realloc move
+		l[i] = d, size++
+
+		pop
+	static
+		l[size--] = {0}
+	dynamic || naive
+		l[size--] = {0}
+		if space < limit realloc
