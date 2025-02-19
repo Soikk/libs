@@ -14,11 +14,11 @@
 #define STR(S)	#S
 
 
-struct str {
+typedef struct str {
 	u32 cap;
 	u32 len;
 	char *ptr;
-};
+} str;
 
 
 bool charisalpha(char c);
@@ -33,31 +33,31 @@ bool charisspace(char c);
 
 char lowerchar(char c);
 
-u32 len(const char *s);
-
 u32 lowers(char *s);
 
-struct str str(char *s);
+u32 len(const char *s);
 
-struct str nstr(u32 cap);
+str dstr(char *s);
+
+str dnstr(u32 cap);
 
 #define slen(s) (sizeof(s)-1)
 
-#define sstr(s) ((struct str){.cap = 0, .len = slen(s), .ptr = s})
+#define sstr(s) ((str){.cap = 0, .len = slen(s), .ptr = s})
 
-#define snstr(s, n) ((struct str){.cap = 0, .len = n, .ptr = s})
+#define snstr(s, n) ((str){.cap = 0, .len = n, .ptr = s})
 
-int resize_str(struct str *s, u32 nsize);
+int resize_str(str *s, u32 nsize);
 
-struct str dup_str(struct str s);
+str dup_str(str s);
 
-u32 lowerstr(struct str s);
+u32 lowerstr(str s);
 
-struct str utostr(u64 n, int b);
+str utostr(u64 n, int b);
 
-u64 strtou(struct str s);
+u64 strtou(str s);
 
-#define NUMSTRS(...) (sizeof((struct str[]){{0}, ##__VA_ARGS__})/sizeof(struct str)-1)
+#define NUMSTRS(...) (sizeof((str[]){{0}, ##__VA_ARGS__})/sizeof(str)-1)
 
 u64 len_nstrs(u64 n, ...);
 
@@ -76,9 +76,9 @@ u64 len_nstrs(u64 n, ...);
 		(dest).len += (src).len;	\
 	}
 
-void copy_nstrs(struct str dst, u64 n, ...);
+void copy_nstrs(str dst, u64 n, ...);
 
-void move_nstrs(struct str dst, u64 n, ...);
+void move_nstrs(str dst, u64 n, ...);
 
 #define copy_strs(d, ...) \
 	copy_nstrs(d, NUMSTRS(__VA_ARGS__), __VA_ARGS__); \
@@ -88,24 +88,24 @@ void move_nstrs(struct str dst, u64 n, ...);
 	move_nstrs(d, NUMSTRS(__VA_ARGS__), __VA_ARGS__); \
 	(d).len += len_nstrs(NUMSTRS(__VA_ARGS__), __VA_ARGS__)
 
-struct str read_delim(char *buf, char d);
+str read_delim(char *buf, char d);
 
-struct str sread_delim(char *buf, char d);
+str sread_delim(char *buf, char d);
 
-struct str read_delim_f(char *buf, bool (*func)(char), bool func_cond);
+str read_delim_f(char *buf, bool (*func)(char), bool func_cond);
 
-struct str sread_delim_f(char *buf, bool (*func)(char), bool func_cond);
+str sread_delim_f(char *buf, bool (*func)(char), bool func_cond);
 
 u32 get_line_len(char *buf);
 
-void fd_to_str(struct str *s, int fd, u32 len);
+void fd_to_str(str *s, int fd, u32 len);
 
-void file_to_str(struct str *s, FILE *fp, u32 len);
+void file_to_str(str *s, FILE *fp, u32 len);
 
-void print_str(struct str s);
+void print_str(str s);
 
-void free_str(struct str *s);
+void free_str(str *s);
 
-char *charinstr(char c, struct str s); // move somewhere relevant
+char *charinstr(char c, str s); // move somewhere relevant
 
 #endif

@@ -31,6 +31,12 @@ char lowerchar(char c){
 	return c;
 }
 
+u32 lowers(char *s){
+	u32 l = -1;
+	while(s[++l]) s[l] = lowerchar(s[l]);
+	return l;
+}
+
 __attribute__ ((optimize(1))) u32 len(const char *s){
 	if(s == NULL) return 0;
 	u32 l = -1;
@@ -38,25 +44,19 @@ __attribute__ ((optimize(1))) u32 len(const char *s){
 	return l;
 }
 
-u32 lowers(char *s){
-	u32 l = -1;
-	while(s[++l]) s[l] = lowerchar(s[l]);
-	return l;
-}
-
-struct str str(char *s){
-	struct str r = {
+str dstr(char *s){
+	str r = {
 		.cap = len(s),
 		.len = r.cap,
 		.ptr = calloc(r.len+1, sizeof(char))
 	};
-	if(r.ptr == NULL) r = (struct str){0};
+	if(r.ptr == NULL) r = (str){0};
 	else memcpy(r.ptr, s, r.len);
 	return r;
 }
 
-struct str nstr(u32 cap){
-	struct str s = {
+str dnstr(u32 cap){
+	str s = {
 		.cap = cap,
 		.len = 0,
 		.ptr = calloc(cap+1, sizeof(char))
@@ -64,7 +64,7 @@ struct str nstr(u32 cap){
 	return s;
 }
 
-int resize_str(struct str *s, u32 nsize){
+int resize_str(str *s, u32 nsize){
 	if(nsize == 0) return 1;
 	char *nptr = realloc(s->ptr, nsize);
 	if(nptr == NULL) return 1;
@@ -73,23 +73,23 @@ int resize_str(struct str *s, u32 nsize){
 	return 0;
 }
 
-struct str dup_str(struct str s){
+str dup_str(str s){
 	// we use len here to account for static strings that have no cap
-	struct str r = {.cap = s.len, .len = s.len, .ptr = calloc(s.len+1, sizeof(char))};
-	if(r.ptr == NULL) return (struct str){0};
+	str r = {.cap = s.len, .len = s.len, .ptr = calloc(s.len+1, sizeof(char))};
+	if(r.ptr == NULL) return (str){0};
 	memcpy(r.ptr, s.ptr, s.len);
 	return r;
 }
 
-u32 lowerstr(struct str s){
+u32 lowerstr(str s){
 	return lowers(s.ptr);
 }
 
-struct str utostr(u64 n, int b){
-	struct str s = {
+str utostr(u64 n, int b){
+	str s = {
 		.ptr = calloc(sizeof(n)*8 + 2, sizeof(char))
 	};
-	if(s.ptr == NULL) return (struct str){0};
+	if(s.ptr == NULL) return (str){0};
 	u64 dn = n, p = 1;
 	while(dn /= b) p *= b;
 	while(p){
@@ -100,7 +100,7 @@ struct str utostr(u64 n, int b){
 	char *nptr = realloc(s.ptr, s.len+1);
 	if(nptr == NULL){
 		free(s.ptr);
-		return (struct str){0};
+		return (str){0};
 	}
 	s.ptr = nptr;
 	s.cap = s.len;
@@ -108,7 +108,7 @@ struct str utostr(u64 n, int b){
 }
 
 // TODO add support for different bases
-u64 strtou(struct str s){
+u64 strtou(str s){
 	u64 i = 0, r = 0;
 	while(charisnum(s.ptr[i])){
 		r *= 10;
@@ -122,62 +122,62 @@ u64 len_nstrs(u64 n, ...){
 	va_list vl;
 	va_start(vl, n);
 	for(u64 i = 0; i < n; i++) {
-		struct str t = va_arg(vl, struct str);
+		str t = va_arg(vl, str);
 		s += t.len;
 	}
 	va_end(vl);
 	return s;
 }
 
-void copy_nstrs(struct str dst, u64 n, ...){
+void copy_nstrs(str dst, u64 n, ...){
 	va_list vl;
 	va_start(vl, n);
 	for(u64 i = 0; i < n; i++) {
-		struct str t = va_arg(vl, struct str);
+		str t = va_arg(vl, str);
 		copy_str(dst, t);
 	}
 	va_end(vl);
 }
 
-void move_nstrs(struct str dst, u64 n, ...){
+void move_nstrs(str dst, u64 n, ...){
 	va_list vl;
 	va_start(vl, n);
 	for(u64 i = 0; i < n; i++) {
-		struct str t = va_arg(vl, struct str);
+		str t = va_arg(vl, str);
 		move_str(dst, t);
 	}
 	va_end(vl);
 }
 
-struct str read_delim(char *buf, char d){
+str read_delim(char *buf, char d){
 	u32 i = 0;
 	while(buf[i] && buf[i] != d) i++;
-	struct str s = {.cap = i, .len = i, .ptr = calloc(s.cap+1, sizeof(char))};
-	if(s.ptr == NULL) return (struct str){0};
+	str s = {.cap = i, .len = i, .ptr = calloc(s.cap+1, sizeof(char))};
+	if(s.ptr == NULL) return (str){0};
 	memcpy(s.ptr, buf, i);
 	return s;
 }
 
-struct str sread_delim(char *buf, char d){
+str sread_delim(char *buf, char d){
 	u32 i = 0;
 	while(buf[i] && buf[i] != d) i++;
-	struct str s = {.cap = 0, .len = i, .ptr = buf};
+	str s = {.cap = 0, .len = i, .ptr = buf};
 	return s;
 }
 
-struct str read_delim_f(char *buf, bool (*func)(char), bool func_cond){
+str read_delim_f(char *buf, bool (*func)(char), bool func_cond){
 	u32 i = 0;
 	while(buf[i] && (func(buf[i]) != func_cond)) i++;
-	struct str s = {.cap = i, .len = i, .ptr = calloc(s.cap+1, sizeof(char))};
-	if(s.ptr == NULL) return (struct str){0};
+	str s = {.cap = i, .len = i, .ptr = calloc(s.cap+1, sizeof(char))};
+	if(s.ptr == NULL) return (str){0};
 	memcpy(s.ptr, buf, i);
 	return s;
 }
 
-struct str sread_delim_f(char *buf, bool (*func)(char), bool func_cond){
+str sread_delim_f(char *buf, bool (*func)(char), bool func_cond){
 	u32 i = 0;
 	while(buf[i] && (func(buf[i]) != func_cond)) i++;
-	struct str s = {.cap = 0, .len = i, .ptr = buf};
+	str s = {.cap = 0, .len = i, .ptr = buf};
 	return s;
 }
 
@@ -187,7 +187,7 @@ u32 get_line_len(char *buf){
 	return l;
 }
 
-void fd_to_str(struct str *s, int fd, u32 len){
+void fd_to_str(str *s, int fd, u32 len){
 	s->ptr = calloc(len+1, sizeof(char));
 	if(s->ptr == NULL) return;
 	for(u32 l = len; l != 0; l -= read(fd, s->ptr+(len-l), l));
@@ -195,7 +195,7 @@ void fd_to_str(struct str *s, int fd, u32 len){
 	s->len = len;
 }
 
-void file_to_str(struct str *s, FILE *fp, u32 len){
+void file_to_str(str *s, FILE *fp, u32 len){
 	s->ptr = calloc(len+1, sizeof(char));
 	if(s->ptr == NULL) return;
 	for(u32 l = len; l != 0; l -= fread(s->ptr, sizeof(char), len, fp));
@@ -203,20 +203,20 @@ void file_to_str(struct str *s, FILE *fp, u32 len){
 	s->len = len;
 }
 
-void print_str(struct str s){
+void print_str(str s){
 	for(u32 i = 0; i < s.len; i++){
 		putchar(s.ptr[i]);
 	}
 }
 
-void free_str(struct str *s){
+void free_str(str *s){
 	if(s->ptr != NULL && s->cap > 0) free(s->ptr);
 	s->ptr = NULL;
 	s->cap = 0;
 	s->len = 0;
 }
 
-char *charinstr(char c, struct str s){
+char *charinstr(char c, str s){
 	for(u32 i = 0; i < s.len; i++){
 		if(s.ptr[i] == c){
 			return s.ptr + i;
