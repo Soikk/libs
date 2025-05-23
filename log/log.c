@@ -11,25 +11,25 @@ static struct {
 	char *color;
 #endif
 } log_levels[LOG_LEVEL_COUNT] = {
-	{ 
+	[LOG_DEBUG] = { 
 		.name = "DEBUG", .set = 1, .fps = {0}, .nfps = 0, .stder = 1,
 #ifdef COLOR
 		.color = "\e[38;2;255;255;0m"
 #endif
 	},
-	{
+	[LOG_INFO] = {
 		.name = "INFO", .set = 1, .fps = {0}, .nfps = 0, .stder = 1,
 #ifdef COLOR
 		.color = "\e[38;2;0;224;255m"
 #endif	
 	},
-	{
+	[LOG_WARN] = {
 		.name = "WARN", .set = 1, .fps = {0}, .nfps = 0, .stder = 1,
 #ifdef COLOR
 		.color = "\e[38;2;255;165;0m"
 #endif
 	},
-	{
+	[LOG_ERROR] = {
 		.name = "ERROR", .set = 1, .fps = {0}, .nfps = 0, .stder = 1,
 #ifdef COLOR
 		.color = "\e[38;2;255;0;0m"
