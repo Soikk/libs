@@ -117,6 +117,20 @@ u64 strtou(str s){
 	return r;
 }
 
+int streq(str s1, str s2){
+	if(s1.len != s2.len){
+		return 0;
+	}
+	int i = 0;
+	while(i < s1.len){
+		if(s1.ptr[i] != s2.ptr[i]){
+			return 0;
+		}
+		i++;
+	}
+	return 1;
+}
+
 u64 len_nstrs(u64 n, ...){
 	u64 s = 0;
 	va_list vl;
@@ -126,6 +140,15 @@ u64 len_nstrs(u64 n, ...){
 		s += t.len;
 	}
 	va_end(vl);
+	return s;
+}
+
+u64 vlen_nstrs(u64 n, va_list args){
+	u64 s = 0;
+	for(u64 i = 0; i < n; i++) {
+		str t = va_arg(args, str);
+		s += t.len;
+	}
 	return s;
 }
 
@@ -139,6 +162,13 @@ void copy_nstrs(str dst, u64 n, ...){
 	va_end(vl);
 }
 
+void vcopy_nstrs(str dst, u64 n, va_list args){
+	for(u64 i = 0; i < n; i++) {
+		str t = va_arg(args, str);
+		copy_str(dst, t);
+	}
+}
+
 void move_nstrs(str dst, u64 n, ...){
 	va_list vl;
 	va_start(vl, n);
@@ -147,6 +177,39 @@ void move_nstrs(str dst, u64 n, ...){
 		move_str(dst, t);
 	}
 	va_end(vl);
+}
+
+void vmove_nstrs(str dst, u64 n, va_list args){
+	for(u64 i = 0; i < n; i++) {
+		str t = va_arg(args, str);
+		move_str(dst, t);
+	}
+}
+
+str dup_nstrs(u64 n, ...){
+	va_list vl, vlc;
+	va_start(vl, n);
+	va_copy(vlc, vl);
+	str r = dnstr(vlen_nstrs(n, vlc));
+	for(u64 i = 0; i < n; i++) {
+		str t = va_arg(vl, str);
+		copy_str(r, t);
+	}
+	va_end(vlc);
+	va_end(vl);
+	return r;
+}
+
+str vdup_nstrs(u64 n, va_list args){
+	va_list vlc;
+	va_copy(vlc, args);
+	str r = dnstr(vlen_nstrs(n, vlc));
+	for(u64 i = 0; i < n; i++) {
+		str t = va_arg(args, str);
+		copy_str(r, t);
+	}
+	va_end(vlc);
+	return r;
 }
 
 str read_delim(char *buf, char d){
