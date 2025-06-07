@@ -250,7 +250,10 @@ u32 get_line_len(char *buf){
 	return l;
 }
 
-void fd_to_str(str *s, int fd, u32 len){
+void fd_to_str(str *s, int fd){
+	// should probably check this isnt bigger than u32 max
+	off_t len = lseek(fd, 0, SEEK_END);
+	lseek(fd, 0, SEEK_SET);
 	s->ptr = calloc(len+1, sizeof(char));
 	if(s->ptr == NULL) return;
 	for(u32 l = len; l != 0; l -= read(fd, s->ptr+(len-l), l));
@@ -258,7 +261,26 @@ void fd_to_str(str *s, int fd, u32 len){
 	s->len = len;
 }
 
-void file_to_str(str *s, FILE *fp, u32 len){
+void fd_to_nstr(str *s, int fd, u32 len){
+	s->ptr = calloc(len+1, sizeof(char));
+	if(s->ptr == NULL) return;
+	for(u32 l = len; l != 0; l -= read(fd, s->ptr+(len-l), l));
+	s->cap = len;
+	s->len = len;
+}
+
+void file_to_str(str *s, FILE *fp){
+	fseek(fp, 0, SEEK_END);
+	long len = ftell(fp);
+	fseek(fp, 0, SEEK_SET);
+	s->ptr = calloc(len+1, sizeof(char));
+	if(s->ptr == NULL) return;
+	for(u32 l = len; l != 0; l -= fread(s->ptr, sizeof(char), len, fp));
+	s->cap = len;
+	s->len = len;
+}
+
+void file_to_nstr(str *s, FILE *fp, u32 len){
 	s->ptr = calloc(len+1, sizeof(char));
 	if(s->ptr == NULL) return;
 	for(u32 l = len; l != 0; l -= fread(s->ptr, sizeof(char), len, fp));

@@ -115,9 +115,13 @@ str sread_delim_f(char *buf, bool (*func)(char), bool func_cond);
 
 u32 get_line_len(char *buf);
 
-void fd_to_str(str *s, int fd, u32 len);
+void fd_to_str(str *s, int fd);
 
-void file_to_str(str *s, FILE *fp, u32 len);
+void fd_to_nstr(str *s, int fd, u32 len);
+
+void file_to_str(str *s, FILE *fp);
+
+void file_to_nstr(str *s, FILE *fp, u32 len);
 
 void print_str(str s);
 
