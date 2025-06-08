@@ -62,7 +62,7 @@ void log_set_level(int level, int of){
 }
 
 int log_add_fp(int level, FILE *fp){
-	if(level >= 0 && level < LOG_LEVEL_COUNT && log_levels[level].nfps < MAX_LOGFILES){
+	if(fp != NULL && level >= 0 && level < LOG_LEVEL_COUNT && log_levels[level].nfps < MAX_LOGFILES){
 		log_levels[level].fps[log_levels[level].nfps++] = fp;
 		return 0;
 	}
