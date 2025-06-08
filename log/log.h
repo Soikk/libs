@@ -26,6 +26,7 @@ enum {
 #define MSG_LIMIT (256)
 
 
+int log_get_stderr(int level);
 int log_set_stderr(int level, int of);
 void log_set_level(int level, int of);
 int log_add_fp(int level, FILE *fp);

@@ -41,6 +41,13 @@ static char time_format[16] = "%T";
 static int nanosecond_precision = 0;
 
 
+int log_get_stderr(int level){
+	if(level >= 0 && level < LOG_LEVEL_COUNT){
+		return log_levels[level].stder;
+	}
+	return 0;
+}
+
 int log_set_stderr(int level, int of){
 	if(level >= 0 && level < LOG_LEVEL_COUNT){
 		return log_levels[level].stder = of;
