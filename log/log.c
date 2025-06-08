@@ -62,13 +62,6 @@ int log_add_fp(int level, FILE *fp){
 	return 1;
 }
 
-int log_get_files(int level){
-	if(level >= 0 && level < LOG_LEVEL_COUNT){
-		return log_levels[level].nfps;
-	}
-	return 0;
-}
-
 FILE *log_get_fp(int level, int i){
 	if(level >= 0 && level < LOG_LEVEL_COUNT && i >= 0 && i < log_levels[level].nfps){
 		return log_levels[level].fps[i];
@@ -90,6 +83,13 @@ int log_remove_fp(int level, FILE *fp){
 		}
 	}
 	return 1;
+}
+
+int log_get_files(int level){
+	if(level >= 0 && level < LOG_LEVEL_COUNT){
+		return log_levels[level].nfps;
+	}
+	return 0;
 }
 
 void log_time_format(char *tf){
