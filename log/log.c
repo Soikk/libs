@@ -55,9 +55,25 @@ void log_set_level(int level, int of){
 }
 
 int log_add_fp(int level, FILE *fp){
-	if(level >= 0 && level < LOG_LEVEL_COUNT && log_levels[level].nfps < MAX_LOGFILES-1){
+	if(level >= 0 && level < LOG_LEVEL_COUNT && log_levels[level].nfps < MAX_LOGFILES){
 		log_levels[level].fps[log_levels[level].nfps++] = fp;
 		return 0;
+	}
+	return 1;
+}
+
+int log_remove_fp(int level, FILE *fp){
+	if(level < 0 || level >= LOG_LEVEL_COUNT){
+		return 1;
+	}
+	for(int i = 0; i < log_levels[level].nfps; i++){
+		if(log_levels[level].fps[i] == fp){
+			for(int j = i; j < MAX_LOGFILES-1; j++){
+				log_levels[level].fps[j] = log_levels[level].fps[j+1];
+			}
+			log_levels[level].fps[log_levels[level].nfps--] = NULL;
+			return 0;
+		}
 	}
 	return 1;
 }

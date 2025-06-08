@@ -29,6 +29,7 @@ enum {
 int log_set_stderr(int level, int of);
 void log_set_level(int level, int of);
 int log_add_fp(int level, FILE *fp);
+int log_remove_fp(int level, FILE *fp);
 void log_time_format(char *tf);
 int log_nanoseconds(int n);
 void log_message(int level, char *file, int line, char *fmt, ...);
