@@ -55,9 +55,15 @@ int log_set_stderr(int level, int of){
 	return 0;
 }
 
-void log_set_level(int level, int of){
+int log_get_level(int level){
 	if(level >= 0 && level < LOG_LEVEL_COUNT){
-		log_levels[level].set = of;
+		return log_levels[level].set;
+	}
+}
+
+int log_set_level(int level, int of){
+	if(level >= 0 && level < LOG_LEVEL_COUNT){
+		return log_levels[level].set = of;
 	}
 }
 
@@ -77,19 +83,41 @@ FILE *log_get_fp(int level, int i){
 }
 
 int log_remove_fp(int level, FILE *fp){
+	if(level >= 0 && level < LOG_LEVEL_COUNT){
+		for(int i = 0; i < log_levels[level].nfps; i++){
+			if(log_levels[level].fps[i] == fp){
+				for(int j = i; j < MAX_LOGFILES-1; j++){
+					log_levels[level].fps[j] = log_levels[level].fps[j+1];
+				}
+				log_levels[level].fps[log_levels[level].nfps--] = NULL;
+				return 0;
+			}
+		}
+	}
+	return 1;
+}
+
+int log_remove_fp_i(int level, int i){
+	if(level < 0 || level >= LOG_LEVEL_COUNT || i < 0 || i >= log_levels[level].nfps){
+		return 1;
+	}
+	int j = i;
+	for(; j < log_levels[level].nfps-1; j++){
+		log_levels[level].fps[j] = log_levels[level].fps[j+1];
+	}
+	log_levels[level].fps[j] = NULL;
+	return 0;
+}
+
+int log_remove_fps(int level){
 	if(level < 0 || level >= LOG_LEVEL_COUNT){
 		return 1;
 	}
 	for(int i = 0; i < log_levels[level].nfps; i++){
-		if(log_levels[level].fps[i] == fp){
-			for(int j = i; j < MAX_LOGFILES-1; j++){
-				log_levels[level].fps[j] = log_levels[level].fps[j+1];
-			}
-			log_levels[level].fps[log_levels[level].nfps--] = NULL;
-			return 0;
-		}
+		log_levels[level].fps[i] = NULL;
 	}
-	return 1;
+	log_levels[level].nfps = 0;
+	return 0;
 }
 
 int log_get_files(int level){

@@ -28,10 +28,13 @@ enum {
 
 int log_get_stderr(int level);
 int log_set_stderr(int level, int of);
-void log_set_level(int level, int of);
+int log_get_level(int level);
+int log_set_level(int level, int of);
 int log_add_fp(int level, FILE *fp);
 FILE *log_get_fp(int level, int i);
 int log_remove_fp(int level, FILE *fp);
+int log_remove_fp_i(int level, int i);
+int log_remove_fps(int level);
 int log_get_files(int level);
 void log_time_format(char *tf);
 int log_nanoseconds(int n);
