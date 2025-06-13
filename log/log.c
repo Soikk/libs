@@ -59,12 +59,14 @@ int log_get_level(int level){
 	if(level >= 0 && level < LOG_LEVEL_COUNT){
 		return log_levels[level].set;
 	}
+	return 0;
 }
 
 int log_set_level(int level, int of){
 	if(level >= 0 && level < LOG_LEVEL_COUNT){
 		return log_levels[level].set = of;
 	}
+	return 0;
 }
 
 int log_add_fp(int level, FILE *fp){
