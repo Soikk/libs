@@ -330,11 +330,11 @@ str map_file(char *filename){
 	}
 	str s = {
 		.cap = get_fd_size(fd),
-		.len = config.cap,
-		.ptr = mmap(NULL, config.len, PROT_READ, MAP_SHARED, fd, 0)
+		.len = s.cap,
+		.ptr = mmap(NULL, s.len, PROT_READ, MAP_SHARED, fd, 0)
 	};
 	if(s.ptr == MAP_FAILED){
-		unload_str(&s);
+		unmap_file(&s);
 	}
 	close(fd);
 	return s;
@@ -347,11 +347,11 @@ str map_file_at(char *filename, int len, int at){
 	}
 	str s = {
 		.cap = len,
-		.len = config.cap,
-		.ptr = mmap(NULL, config.len, PROT_READ, MAP_SHARED, fd, at)
+		.len = s.cap,
+		.ptr = mmap(NULL, s.len, PROT_READ, MAP_SHARED, fd, at)
 	};
 	if(s.ptr == MAP_FAILED){
-		unload_str(&s);
+		unmap_file(&s);
 	}
 	close(fd);
 	return s;
@@ -359,9 +359,9 @@ str map_file_at(char *filename, int len, int at){
 
 void unmap_file(str *s){
 	munmap(s->ptr, s->len);
-	config->ptr = NULL;
-	config->len = 0;
-	config->cap = 0;
+	s->ptr = NULL;
+	s->len = 0;
+	s->cap = 0;
 }
 
 void print_str(str s){
