@@ -250,42 +250,118 @@ u32 get_line_len(char *buf){
 	return l;
 }
 
-void fd_to_str(str *s, int fd){
-	// should probably check this isnt bigger than u32 max
-	off_t len = lseek(fd, 0, SEEK_END);
-	lseek(fd, 0, SEEK_SET);
-	s->ptr = calloc(len+1, sizeof(char));
-	if(s->ptr == NULL) return;
-	for(u32 l = len; l != 0; l -= read(fd, s->ptr+(len-l), l));
-	s->cap = len;
-	s->len = len;
+str fd_to_str(int fd){
+	u64 len = get_fd_size(fd);
+	str s = {
+		.cap = len,
+		.len = len,
+		.ptr = calloc(len+1, sizeof(char))
+	};
+	if(s.ptr == NULL) return (str){0};
+	for(u32 l = len; l != 0; l -= read(fd, s.ptr+(len-l), l));
+	return s;
 }
 
-void fd_to_nstr(str *s, int fd, u32 len){
-	s->ptr = calloc(len+1, sizeof(char));
-	if(s->ptr == NULL) return;
-	for(u32 l = len; l != 0; l -= read(fd, s->ptr+(len-l), l));
-	s->cap = len;
-	s->len = len;
+str fd_to_nstr(int fd, u32 len){
+	str s = {
+		.cap = len,
+		.len = len,
+		.ptr = calloc(len+1, sizeof(char))
+	};
+	if(s.ptr == NULL) return (str){0};
+	for(u32 l = len; l != 0; l -= read(fd, s.ptr+(len-l), l));
+	return s;
 }
 
-void file_to_str(str *s, FILE *fp){
-	fseek(fp, 0, SEEK_END);
-	long len = ftell(fp);
-	fseek(fp, 0, SEEK_SET);
-	s->ptr = calloc(len+1, sizeof(char));
-	if(s->ptr == NULL) return;
-	for(u32 l = len; l != 0; l -= fread(s->ptr, sizeof(char), len, fp));
-	s->cap = len;
-	s->len = len;
+str fp_to_str(FILE *fp){
+	u64 len = get_fp_size(fp);
+	str s = {
+		.cap = len,
+		.len = len,
+		.ptr = calloc(len+1, sizeof(char))
+	};
+	if(s.ptr == NULL) return (str){0};
+	for(u32 l = len; l != 0; l -= fread(s.ptr, sizeof(char), len, fp));
+	return s;
 }
 
-void file_to_nstr(str *s, FILE *fp, u32 len){
-	s->ptr = calloc(len+1, sizeof(char));
-	if(s->ptr == NULL) return;
-	for(u32 l = len; l != 0; l -= fread(s->ptr, sizeof(char), len, fp));
-	s->cap = len;
-	s->len = len;
+str fp_to_nstr(FILE *fp, u32 len){
+	str s = {
+		.cap = len,
+		.len = len,
+		.ptr = calloc(len+1, sizeof(char))
+	};
+	if(s.ptr == NULL) return (str){0};
+	for(u32 l = len; l != 0; l -= fread(s.ptr, sizeof(char), len, fp));
+	return s;
+}
+
+str file_to_str(char *filename){
+	u64 len = get_file_size(filename);
+	FILE *fp = fopen(filename, "r");
+	str s = {
+		.cap = len,
+		.len = len,
+		.ptr = calloc(len+1, sizeof(char))
+	};
+	if(fp == NULL || s.ptr == NULL) return (str){0};
+	for(u32 l = len; l != 0; l -= fread(s.ptr, sizeof(char), len, fp));
+	fclose(fp);
+	return s;
+}
+
+str file_to_nstr(char *filename, u32 len){
+	FILE *fp = fopen(filename, "r");
+	str s = {
+		.cap = len,
+		.len = len,
+		.ptr = calloc(len+1, sizeof(char))
+	};
+	if(fp == NULL || s.ptr == NULL) return (str){0};
+	for(u32 l = len; l != 0; l -= fread(s.ptr, sizeof(char), len, fp));
+	fclose(fp);
+	return s;
+}
+
+str load_str(char *filename){
+	int fd = open(filename, 0);
+	if(fd == -1){
+		return (str){0};
+	}
+	str s = {
+		.cap = get_fd_size(fd),
+		.len = config.cap,
+		.ptr = mmap(NULL, config.len, PROT_READ, MAP_SHARED, fd, 0)
+	};
+	if(s.ptr == MAP_FAILED){
+		unload_str(&s);
+	}
+	close(fd);
+	return s;
+}
+
+str load_nstr_at(char *filename, int len, int at){
+	int fd = open(filename, 0);
+	if(fd == -1){
+		return (str){0};
+	}
+	str s = {
+		.cap = len,
+		.len = config.cap,
+		.ptr = mmap(NULL, config.len, PROT_READ, MAP_SHARED, fd, at)
+	};
+	if(s.ptr == MAP_FAILED){
+		unload_str(&s);
+	}
+	close(fd);
+	return s;
+}
+
+void unload_str(str *s){
+	munmap(s->ptr, s->len);
+	config->ptr = NULL;
+	config->len = 0;
+	config->cap = 0;
 }
 
 void print_str(str s){

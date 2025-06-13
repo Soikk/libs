@@ -9,6 +9,7 @@
 #include <stdarg.h>
 #include <ctype.h>
 #include "types/types.h"
+#include "files/files.h"
 
 #define XSTR(S)	STR(S)
 #define STR(S)	#S
@@ -115,13 +116,16 @@ str sread_delim_f(char *buf, bool (*func)(char), bool func_cond);
 
 u32 get_line_len(char *buf);
 
-void fd_to_str(str *s, int fd);
-
-void fd_to_nstr(str *s, int fd, u32 len);
-
-void file_to_str(str *s, FILE *fp);
-
-void file_to_nstr(str *s, FILE *fp, u32 len);
+str fd_to_str(int fd);
+str fd_to_nstr(int fd, u32 len);
+str fp_to_str(FILE *fp);
+str fp_to_nstr(FILE *fp, u32 len);
+str file_to_str(char *filename);
+str file_to_nstr(char *filename, u32 len);
+str load_str(char *filename);
+// consider adding 'at' to other file-to-str functions
+str load_nstr_at(char *filename, int len, int at);
+void unload_str(str *s);
 
 void print_str(str s);
 
