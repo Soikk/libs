@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <ctype.h>
+#include <fcntl.h>
 #include <sys/mman.h>
 #include "types/types.h"
 #include "files/files.h"
