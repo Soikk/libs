@@ -323,7 +323,7 @@ str file_to_nstr(char *filename, u32 len){
 	return s;
 }
 
-str load_str(char *filename){
+str map_file(char *filename){
 	int fd = open(filename, 0);
 	if(fd == -1){
 		return (str){0};
@@ -340,7 +340,7 @@ str load_str(char *filename){
 	return s;
 }
 
-str load_nstr_at(char *filename, int len, int at){
+str map_file_at(char *filename, int len, int at){
 	int fd = open(filename, 0);
 	if(fd == -1){
 		return (str){0};
@@ -357,7 +357,7 @@ str load_nstr_at(char *filename, int len, int at){
 	return s;
 }
 
-void unload_str(str *s){
+void unmap_file(str *s){
 	munmap(s->ptr, s->len);
 	config->ptr = NULL;
 	config->len = 0;

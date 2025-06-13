@@ -8,6 +8,7 @@
 #include <string.h>
 #include <stdarg.h>
 #include <ctype.h>
+#include <sys/mman.h>
 #include "types/types.h"
 #include "files/files.h"
 
@@ -122,10 +123,10 @@ str fp_to_str(FILE *fp);
 str fp_to_nstr(FILE *fp, u32 len);
 str file_to_str(char *filename);
 str file_to_nstr(char *filename, u32 len);
-str load_str(char *filename);
+str map_file(char *filename);
 // consider adding 'at' to other file-to-str functions
-str load_nstr_at(char *filename, int len, int at);
-void unload_str(str *s);
+str map_file_at(char *filename, int len, int at);
+void unmap_file(str *s);
 
 void print_str(str s);
 
