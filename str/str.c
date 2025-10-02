@@ -64,6 +64,24 @@ str dnstr(u32 cap){
 	return s;
 }
 
+str dsstr(char *s){
+	str r = {
+		.cap = 0,
+		.len = len(s),
+		.ptr = s
+	};
+	return r;
+}
+
+str dsnstr(char *s, u32 len){
+	str r = {
+		.cap = 0,
+		.len = len,
+		.ptr = s
+	};
+	return r;
+}
+
 int resize_str(str *s, u32 nsize){
 	if(nsize == 0) return 1;
 	char *nptr = realloc(s->ptr, nsize);
@@ -108,6 +126,7 @@ str utostr(u64 n, int b){
 }
 
 // TODO add support for different bases
+// TODO check length
 u64 strtou(str s){
 	u64 i = 0, r = 0;
 	while(charisnum(s.ptr[i])){
@@ -121,8 +140,22 @@ int streq(str s1, str s2){
 	if(s1.len != s2.len){
 		return 0;
 	}
-	int i = 0;
+	u32 i = 0;
 	while(i < s1.len){
+		if(s1.ptr[i] != s2.ptr[i]){
+			return 0;
+		}
+		i++;
+	}
+	return 1;
+}
+
+int streqn(str s1, str s2, u32 n){
+	if(s1.len < n || s2.len < n){
+		return 0;
+	}
+	u32 i = 0;
+	while(i < n){
 		if(s1.ptr[i] != s2.ptr[i]){
 			return 0;
 		}
@@ -362,6 +395,28 @@ void unmap_file(str *s){
 	s->ptr = NULL;
 	s->len = 0;
 	s->cap = 0;
+}
+
+str fread_str(int fd, int max){
+	str s = dnstr(max);
+	s.len = read(fd, s.ptr, s.cap);
+	if(s.len == 0){
+		free_str(&s);
+		return (str){0};
+	}
+	if(s.ptr[s.len-1] == '\n'){
+		s.ptr[--s.len] = '\0';
+	}
+	if(s.len != s.cap){
+		char *p = realloc(s.ptr, s.len+1);
+		if(p == NULL){
+			free_str(&s);
+			return (str){0};
+		}
+		s.ptr = p;
+		s.cap = s.len;
+	}
+	return s;
 }
 
 void print_str(str s){
