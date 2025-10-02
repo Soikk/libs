@@ -17,6 +17,7 @@ void _list_realloc(void **list, u32 n){
 	*list = (void*)nh+sizeof(struct list_header);
 }
 
+// TODO look into removing adjusting the list size when the size decreases
 void _list_adjust(void **list){
 	struct list_header *h = list_header(*list);
 	if(h == NULL) return; // TODO error warning??

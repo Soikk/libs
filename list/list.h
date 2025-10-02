@@ -73,6 +73,11 @@ enum LIST_TYPE {
 #define _choose_init(_1, _2, NAME, ...) NAME
 #define init_list(...) _choose_init(__VA_ARGS__, init_slist, init_dlist)(__VA_ARGS__)
 
+#define list_size_increment(l) ({	\
+	struct list_header *h = list_header(l);	\
+	if(h != NULL) h->size++;	\
+})
+
 #define list_peek(l) ({	\
 	typeof((l)[0]) d = {0};	\
 	struct list_header *h = list_header(l);	\
@@ -134,6 +139,7 @@ enum LIST_TYPE {
 	found;	\
 })
 
+// TODO check for typeof
 #define list_push(l, d) ({	\
 	_list_adjust((void**)&(l));	\
 	struct list_header *h = list_header(l);	\
@@ -145,6 +151,8 @@ enum LIST_TYPE {
 	}	\
 })
 
+// TODO check for typeof
+// TODO check i > 0
 #define list_push_i(l, d, i) ({	\
 	_list_adjust((void**)&(l));	\
 	struct list_header *h = list_header(l);	\
@@ -192,6 +200,16 @@ enum LIST_TYPE {
 		h = list_header(l);	\
 		memcpy(l+h->size, a, ins);	\
 		h->size += ins;	\
+	}	\
+})
+
+// TODO encapsulate all indexes in parentheses in all macros
+#define list_swap(l, i, j) ({	\
+	struct list_header *h = list_header(l);	\
+	if(h != NULL && (i) != (j) && (i) >= 0 && (i) < h->size && (j) >= 0 && (j) < h->size){	\
+		typeof((l)[0]) t = (l)[i];	\
+		(l)[i] = (l)[j];	\
+		(l)[j] = t;	\
 	}	\
 })
 
