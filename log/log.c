@@ -174,7 +174,7 @@ void log_message(int level, char *file, int line, char *fmt, ...){
 		if(log_levels[level].stder) fputs(msg, stderr);
 		for(int i = 0; i < log_levels[level].nfps; i++){
 			if(log_levels[level].fps[i] != NULL)
-				fputs(msg, log_levels[level].fps[i++]);
+				fputs(msg, log_levels[level].fps[i]);
 		}
 	}
 }
