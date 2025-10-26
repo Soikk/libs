@@ -149,7 +149,8 @@ void log_message(int level, char *file, int line, char *fmt, ...){
 		char msg[MSG_LIMIT] = {0};
 		int written = snprintf(msg, MSG_LIMIT-2,
 #ifdef PID
-			"[%d] "
+			// the maximum PID is a 5 digit number. this shoud be customizable
+			"[%-5d] "
 #endif
 			"%s%s%s%s%s%s%s\t",
 #ifdef PID
@@ -173,8 +174,10 @@ void log_message(int level, char *file, int line, char *fmt, ...){
 		msg[written] = '\n';
 		if(log_levels[level].stder) fputs(msg, stderr);
 		for(int i = 0; i < log_levels[level].nfps; i++){
-			if(log_levels[level].fps[i] != NULL)
+			if(log_levels[level].fps[i] != NULL){
 				fputs(msg, log_levels[level].fps[i]);
+				fflush(log_levels[level].fps[i]);
+			}
 		}
 	}
 }
