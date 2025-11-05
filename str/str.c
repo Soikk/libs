@@ -356,6 +356,12 @@ str file_to_nstr(char *filename, u32 len){
 	return s;
 }
 
+void str_to_file(str s, char *filename){
+	FILE *fp = fopen(filename, "r");
+	str_to_fp(s, fp);
+	fclose(fp)
+}
+
 str map_file(char *filename){
 	int fd = open(filename, 0);
 	if(fd == -1){
@@ -397,6 +403,7 @@ void unmap_file(str *s){
 	s->cap = 0;
 }
 
+// TODO: check if this function is redundant
 str fread_str(int fd, int max){
 	str s = dnstr(max);
 	s.len = read(fd, s.ptr, s.cap);
