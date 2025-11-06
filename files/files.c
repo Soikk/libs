@@ -12,7 +12,16 @@ int dir_exists(char *dirpath){
 int file_exists(char *filepath){
 	struct stat st;
 	if(stat(filepath, &st) == 0){
-		return S_ISREG(st.st_mode);
+		return
+			S_ISREG(st.st_mode) ||
+			S_ISSOCK(st.st_mode) ||
+			S_ISFIFO(st.st_mode) ||
+			S_ISCHR(st.st_mode) ||
+			S_ISBLK(st.st_mode) ||
+			S_TYPEISSHM(&st) ||
+			S_TYPEISMQ(&st) ||
+			S_TYPEISSEM(&st)
+		;
 	}
 	return 0;
 }
