@@ -113,7 +113,7 @@ str fp_to_nstr(FILE *fp, u32 len);
 str file_to_str(char *filename);
 str file_to_nstr(char *filename, u32 len);
 #define str_to_fd(s, fd) write(fd, s.ptr, s.len)
-#define str_to_fp(s, fp) fwrite(s.ptr, sizeof(str.ptr[0]), s.len, fp)
+#define str_to_fp(s, fp) fwrite(s.ptr, sizeof(s.ptr[0]), s.len, fp)
 void str_to_file(str s, char *filename);
 
 str map_file(char *filename);

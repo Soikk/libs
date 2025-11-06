@@ -359,7 +359,7 @@ str file_to_nstr(char *filename, u32 len){
 void str_to_file(str s, char *filename){
 	FILE *fp = fopen(filename, "r");
 	str_to_fp(s, fp);
-	fclose(fp)
+	fclose(fp);
 }
 
 str map_file(char *filename){
