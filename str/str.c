@@ -364,14 +364,14 @@ void str_to_file(str s, char *filename){
 }
 
 str map_file(char *filename){
-	int fd = open(filename, 0);
+	int fd = open(filename, O_RDWR);
 	if(fd == -1){
 		return (str){0};
 	}
 	str s = {
 		.cap = get_fd_size(fd),
 		.len = s.cap,
-		.ptr = mmap(NULL, s.len, PROT_READ, MAP_SHARED, fd, 0)
+		.ptr = mmap(NULL, s.len, PROT_READ | PROT_WRITE, MAP_SHARED, fd, 0)
 	};
 	if(s.ptr == MAP_FAILED){
 		unmap_file(&s);
