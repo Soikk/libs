@@ -254,9 +254,25 @@ str read_delim(char *buf, char d){
 	return s;
 }
 
+str bread_delim(char *buf, char d){
+	u32 i = 0;
+	while(buf[i] != d) i++;
+	str s = {.cap = i, .len = i, .ptr = calloc(s.cap+1, sizeof(char))};
+	if(s.ptr == NULL) return (str){0};
+	memcpy(s.ptr, buf, i);
+	return s;
+}
+
 str sread_delim(char *buf, char d){
 	u32 i = 0;
 	while(buf[i] && buf[i] != d) i++;
+	str s = {.cap = 0, .len = i, .ptr = buf};
+	return s;
+}
+
+str sbread_delim(char *buf, char d){
+	u32 i = 0;
+	while(buf[i] != d) i++;
 	str s = {.cap = 0, .len = i, .ptr = buf};
 	return s;
 }
@@ -270,9 +286,25 @@ str read_delim_f(char *buf, bool (*func)(char), bool func_cond){
 	return s;
 }
 
+str bread_delim_f(char *buf, bool (*func)(char), bool func_cond){
+	u32 i = 0;
+	while(func(buf[i]) != func_cond) i++;
+	str s = {.cap = i, .len = i, .ptr = calloc(s.cap+1, sizeof(char))};
+	if(s.ptr == NULL) return (str){0};
+	memcpy(s.ptr, buf, i);
+	return s;
+}
+
 str sread_delim_f(char *buf, bool (*func)(char), bool func_cond){
 	u32 i = 0;
 	while(buf[i] && (func(buf[i]) != func_cond)) i++;
+	str s = {.cap = 0, .len = i, .ptr = buf};
+	return s;
+}
+
+str sbread_delim_f(char *buf, bool (*func)(char), bool func_cond){
+	u32 i = 0;
+	while(func(buf[i]) != func_cond) i++;
 	str s = {.cap = 0, .len = i, .ptr = buf};
 	return s;
 }

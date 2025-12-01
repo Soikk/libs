@@ -99,9 +99,13 @@ str vdup_nstrs(u64 n, va_list args);
 	dup_nstrs(NUMSTRS(__VA_ARGS__), __VA_ARGS__);
 
 str read_delim(char *buf, char d);
+str bread_delim(char *buf, char d);
 str sread_delim(char *buf, char d);
+str sbread_delim(char *buf, char d);
 str read_delim_f(char *buf, bool (*func)(char), bool func_cond);
+str bread_delim_f(char *buf, bool (*func)(char), bool func_cond);
 str sread_delim_f(char *buf, bool (*func)(char), bool func_cond);
+str sbread_delim_f(char *buf, bool (*func)(char), bool func_cond);
 
 // probably do away with this
 u32 get_line_len(char *buf);
