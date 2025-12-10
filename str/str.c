@@ -48,7 +48,7 @@ str dstr(char *s){
 	str r = {
 		.cap = len(s),
 		.len = r.cap,
-		.ptr = calloc(r.len+1, sizeof(char))
+		.ptr = r.cap > 0 ? calloc(r.len+1, sizeof(char)) : NULL
 	};
 	if(r.ptr == NULL) r = (str){0};
 	else memcpy(r.ptr, s, r.len);
@@ -56,6 +56,7 @@ str dstr(char *s){
 }
 
 str dnstr(u32 cap){
+	if(cap == 0) return (str){0};
 	str s = {
 		.cap = cap,
 		.len = 0,
