@@ -23,7 +23,7 @@ enum {
 };
 
 #define MAX_LOGFILES (8)
-#define MSG_LIMIT (256)
+#define MSG_LIMIT (4096)
 
 
 int log_get_stderr(int level);

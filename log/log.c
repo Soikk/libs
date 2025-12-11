@@ -166,7 +166,7 @@ void log_message(int level, char *file, int line, char *fmt, ...){
 			log_levels[level].name, "\e[0m"
 		);
 		if(level == LOG_DEBUG){
-			written += snprintf(msg+written, MSG_LIMIT-2-written, "%s:%d: ",file, line);
+			written += snprintf(msg+written, MSG_LIMIT-2-written, "%s:%d: ", file, line);
 		}
 		va_list args;
 		va_start(args, fmt);
