@@ -27,13 +27,26 @@ __attribute__ ((optimize(3))) bool charisspace(char c){
 }
 
 char lowerchar(char c){
+	// assuming ASCII
 	if(c >= 'A' && c <= 'Z') c += 32;
+	return c;
+}
+
+char upperchar(char c){
+	// assuming ASCII
+	if(c >= 'a' && c <= 'z') c -= 32;
 	return c;
 }
 
 u32 lowers(char *s){
 	u32 l = -1;
 	while(s[++l]) s[l] = lowerchar(s[l]);
+	return l;
+}
+
+u32 uppers(char *s){
+	u32 l = -1;
+	while(s[++l]) s[l] = upperchar(s[l]);
 	return l;
 }
 
@@ -102,6 +115,10 @@ str dup_str(str s){
 
 u32 lowerstr(str s){
 	return lowers(s.ptr);
+}
+
+u32 upperstr(str s){
+	return uppers(s.ptr);
 }
 
 str utostr(u64 n, int b){
@@ -364,14 +381,14 @@ str fp_to_nstr(FILE *fp, u32 len){
 
 str file_to_str(char *filename){
 	u64 len = get_file_size(filename);
-	FILE *fp = fopen(filename, "r");
+	FILE *fp = fopen(filename, "rb");
 	str s = {
 		.cap = len,
 		.len = len,
 		.ptr = calloc(len+1, sizeof(char))
 	};
 	if(fp == NULL || s.ptr == NULL) return (str){0};
-	for(u32 l = len; l != 0; l -= fread(s.ptr, sizeof(char), len, fp));
+	for(u32 l = len; l != 0; l -= fread(s.ptr, sizeof(char), l, fp));
 	fclose(fp);
 	return s;
 }

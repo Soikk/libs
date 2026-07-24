@@ -33,7 +33,9 @@ bool charislinebreak(char c);
 bool charisspace(char c);
 
 char lowerchar(char c);
+char upperchar(char c);
 u32 lowers(char *s);
+u32 uppers(char *s);
 
 u32 len(const char *s);
 
@@ -53,11 +55,9 @@ int resize_str(str *s, u32 nsize);
 str dup_str(str s);
 
 u32 lowerstr(str s);
-
+u32 upperstr(str s);
 str utostr(u64 n, int b);
-
 u64 strtou(str s);
-
 int streq(str s1, str s2);
 int streqn(str s1, str s2, u32 n);
 
@@ -71,15 +71,22 @@ u64 vlen_nstrs(u64 n, va_list args);
 #define len_strs(...) \
 	len_nstrs(NUMSTRS(__VA_ARGS__), __VA_ARGS__)
 
+#define fill_str(dest, src) \
+	if((dest).ptr != NULL && (src).ptr != NULL){	\
+		int len = (dest).cap < (src). len ? (dest).cap : (src).len;	\
+		memcpy((dest).ptr, (src).ptr, len); \
+		(dest).len = len;	\
+	}
+
 // probably should change to append or something
 #define copy_str(dest, src) \
-	if(dest.ptr != NULL && src.ptr != NULL){	\
+	if((dest).ptr != NULL && (src).ptr != NULL){	\
 		memcpy((dest).ptr+(dest).len, (src).ptr, (src).len); \
 		(dest).len += (src).len;	\
 	}
 
 #define move_str(dest, src) \
-	if(dest.ptr != NULL && src.ptr != NULL){	\
+	if((dest).ptr != NULL && (src).ptr != NULL){	\
 		memmove((dest).ptr+(dest).len, (src).ptr, (src).len); \
 		(dest).len += (src).len;	\
 	}
