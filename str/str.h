@@ -24,6 +24,8 @@ typedef struct str {
 } str;
 
 
+#define FSTR(s) s.len, s.ptr
+
 bool charisalpha(char c);
 bool charisnum(char c);
 bool charisblank(char c);
@@ -35,6 +37,7 @@ u32 lowers(char *s);
 
 u32 len(const char *s);
 
+// TODO: make alloca macro versions
 // reorder?
 str dstr(char *s);
 str dnstr(u32 cap);
@@ -42,9 +45,7 @@ str dsstr(char *s);
 str dsnstr(char *s, u32 len);
 
 #define slen(s) (sizeof(s)-1)
-
 #define sstr(s) ((str){.cap = 0, .len = slen(s), .ptr = s})
-
 #define snstr(s, n) ((str){.cap = 0, .len = n, .ptr = s})
 
 int resize_str(str *s, u32 nsize);
